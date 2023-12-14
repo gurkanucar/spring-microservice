@@ -25,19 +25,25 @@ public class Startup implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-
-    // created for microservice authentication
-    UserDto admin = new UserDto();
-    admin.setName("SERVICE");
-    admin.setUsername(username);
-    admin.setPassword(password);
-    admin.setEnabled(true);
-    userService.createUser(admin);
-
     createDummyData();
   }
 
   private void createDummyData() {
+    RoleDto serviceRol = new RoleDto();
+    serviceRol.setName("SERVICE");
+    serviceRol = roleService.createRole(serviceRol);
+
+    // created for microservice authentication while requesting to auth-service
+    UserDto service = new UserDto();
+    service.setName("SERVICE");
+    service.setUsername(username);
+    service.setPassword(password);
+    service.setEnabled(true);
+    service.setRoles(Set.of(serviceRol));
+    userService.createUser(service);
+
+    // create initial users and roles
+
     RoleDto adminRole = new RoleDto();
     adminRole.setName("ADMIN");
     adminRole = roleService.createRole(adminRole);
