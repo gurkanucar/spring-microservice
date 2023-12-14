@@ -6,6 +6,7 @@ import com.gucardev.authservice.service.RoleService;
 import com.gucardev.authservice.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +17,23 @@ public class Startup implements CommandLineRunner {
   private final RoleService roleService;
   private final UserService userService;
 
+  @Value("${spring.security.user.name}")
+  private String username;
+
+  @Value("${spring.security.user.password}")
+  private String password;
+
   @Override
   public void run(String... args) {
+
+    // created for microservice authentication
+    UserDto admin = new UserDto();
+    admin.setName("SERVICE");
+    admin.setUsername(username);
+    admin.setPassword(password);
+    admin.setEnabled(true);
+    userService.createUser(admin);
+
     createDummyData();
   }
 
