@@ -1,9 +1,6 @@
 package com.gucardev.projectservice.service;
 
-import com.gucardev.projectservice.dto.ProjectDto;
-import com.gucardev.projectservice.dto.ProjectRequest;
-import com.gucardev.projectservice.dto.RoleDto;
-import com.gucardev.projectservice.dto.UserDto;
+import com.gucardev.projectservice.dto.*;
 import com.gucardev.projectservice.mapper.ProjectMapper;
 import com.gucardev.projectservice.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -67,5 +64,17 @@ public class ProjectService {
     var existing =
         repository.findById(id).orElseThrow(() -> new EntityNotFoundException("not found!"));
     repository.delete(existing);
+  }
+
+  public AnalyticResponse getAnalytics() {
+    AnalyticResponse analyticResponse = new AnalyticResponse();
+    analyticResponse.setProjectCount(repository.count());
+    // Get the maximum number of projects for one person
+    List<Object[]> maxProjectCountForOnePersonData = repository.findMaxProjectCountForOnePerson();
+    if (!maxProjectCountForOnePersonData.isEmpty()) {
+      Long maxProjectCountForOnePerson = (Long) maxProjectCountForOnePersonData.get(0)[0];
+      analyticResponse.setMaxProjectCountForOnePerson(maxProjectCountForOnePerson);
+    }
+    return analyticResponse;
   }
 }

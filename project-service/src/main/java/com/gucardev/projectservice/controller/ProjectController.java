@@ -1,5 +1,6 @@
 package com.gucardev.projectservice.controller;
 
+import com.gucardev.projectservice.dto.AnalyticResponse;
 import com.gucardev.projectservice.dto.ProjectDto;
 import com.gucardev.projectservice.dto.ProjectRequest;
 import com.gucardev.projectservice.service.ProjectService;
@@ -18,6 +19,11 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectController {
 
   private final ProjectService projectService;
+
+  @GetMapping("/analytics")
+  public ResponseEntity<AnalyticResponse> getAnalytics() {
+    return ResponseEntity.ok(projectService.getAnalytics());
+  }
 
   @PostMapping
   public ResponseEntity<ProjectDto> createProject(
