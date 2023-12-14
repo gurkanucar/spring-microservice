@@ -1,15 +1,15 @@
 package com.gucardev.projectservice.service;
 
-import com.gucardev.projectservice.client.AuthClient;
 import com.gucardev.projectservice.dto.ProjectDto;
 import com.gucardev.projectservice.dto.ProjectRequest;
+import com.gucardev.projectservice.dto.RoleDto;
+import com.gucardev.projectservice.dto.UserDto;
 import com.gucardev.projectservice.mapper.ProjectMapper;
 import com.gucardev.projectservice.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +18,7 @@ public class ProjectService {
 
   private final ProjectMapper mapper;
   private final ProjectRepository repository;
-  private final AuthClient authClient;
+  private final UserService userService;
 
   public ProjectDto create(ProjectRequest request) {
     return mapper.toDto(repository.save(mapper.toEntity(request)));
@@ -36,21 +36,28 @@ public class ProjectService {
   }
 
   public List<ProjectDto> getAll() {
-    var user =
-        authClient
-            .getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()+"asd")
-            .getBody();
+    UserDto user = userService.getAuthenticatedUser();
+    if (user.getRoles().stream().map(RoleDto::getName).anyMatch(x -> x.equals("ADMIN"))) {
+      return getAllAdmin();
+    }
+
     return repository.findAllByUserId(Objects.requireNonNull(user).getId()).stream()
         .map(mapper::toDto)
         .toList();
   }
 
   public ProjectDto update(ProjectRequest request) {
-    // get authenticated user and then check ids
     var existing =
         repository
             .findById(request.getId())
             .orElseThrow(() -> new EntityNotFoundException("not found!"));
+
+    // get authenticated user and then check ids
+    UserDto user = userService.getAuthenticatedUser();
+    if (!user.getId().equals(existing.getUserId())) {
+      throw new RuntimeException("this user is not owner of project!");
+    }
+
     mapper.update(request, existing);
     return mapper.toDto(repository.save(existing));
   }

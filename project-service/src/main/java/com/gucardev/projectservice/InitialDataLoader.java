@@ -28,8 +28,10 @@ public class InitialDataLoader implements CommandLineRunner {
 
   private List<ProjectRequest> createSampleProjects() {
     return List.of(
-        new ProjectRequest(null, 1L, "Project 1", "Details for Project 1"),
+        new ProjectRequest(null, 2L, "Project 1", "Details for Project 1"),
         new ProjectRequest(null, 2L, "Project 2", "Details for Project 2"),
-        new ProjectRequest(null, 1L, "Project 3", "Details for Project 3"));
+        new ProjectRequest(null, 5L, "Project 3", "Details for Project 3"),
+        new ProjectRequest(null, 2L, "Project 4", "Details for Project 4"),
+        new ProjectRequest(null, 3L, "Project 5", "Details for Project 5"));
   }
 }

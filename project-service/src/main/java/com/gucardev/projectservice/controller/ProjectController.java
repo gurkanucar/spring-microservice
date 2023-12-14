@@ -38,12 +38,6 @@ public class ProjectController {
     return ResponseEntity.ok(projects);
   }
 
-  @GetMapping("/all")
-  public ResponseEntity<List<ProjectDto>> getAllProjectsAdmin() {
-    List<ProjectDto> projects = projectService.getAllAdmin();
-    return ResponseEntity.ok(projects);
-  }
-
   @PutMapping
   public ResponseEntity<ProjectDto> updateProject(
       @Validated(UpdateValidationGroup.class) @RequestBody ProjectRequest request) {
