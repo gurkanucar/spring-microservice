@@ -38,7 +38,7 @@ public class ProjectService {
   public List<ProjectDto> getAll() {
     var user =
         authClient
-            .getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+            .getUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()+"asd")
             .getBody();
     return repository.findAllByUserId(Objects.requireNonNull(user).getId()).stream()
         .map(mapper::toDto)
